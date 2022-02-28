@@ -11,7 +11,6 @@
 export default {
   props: {
     method: Function,
-    todos: Array,
     name: String,
     cssClass: String,
     disabled: Boolean,
@@ -19,7 +18,7 @@ export default {
 };
 </script>
 
-<style setup>
+<style scoped>
 .add-todo-btn {
   background-color: rgb(28, 236, 97) !important;
 }
@@ -34,7 +33,7 @@ export default {
   color: white;
   border-radius: 1rem;
 }
-.not-done-btn {
+.undo-btn {
   background-color: rgb(74, 117, 211);
   color: white;
   border-radius: 1rem;
@@ -42,10 +41,10 @@ export default {
 .edit-btn {
   background-color: rgba(238, 255, 0, 0.87);
 }
-.danger {
+.danger-btn {
   background-color: rgba(252, 47, 10, 0.87);
 }
-.danger:hover {
+.danger-btn:hover {
   background-color: white !important;
 }
 .list-btn {
@@ -69,14 +68,12 @@ export default {
   touch-action: manipulation;
   vertical-align: middle;
 }
-
 .list-btn:hover,
 .list-btn:active {
   background-color: initial;
   background-position: 0 0;
   color: #ff4742;
 }
-
 .list-btn:active {
   opacity: 0.5;
 }

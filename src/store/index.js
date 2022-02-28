@@ -6,46 +6,77 @@ export default createStore({
       {
         taskID: 0,
         taskName: "destroy Ukraine",
-        editedName: "destroy Ukraine",
         estTime: "3days",
+        disabled: false,
         onEdit: false,
+        done: false,
       },
       {
         taskID: 1,
         taskName: "ocupy Doneck",
-        editedName: "ocupy Doneck",
         estTime: "7 hours",
+        disabled: false,
         onEdit: false,
+        done: false,
       },
     ],
-    taskButtons: [
-      { btnID: 0, name: "Edit", method: "editSelectedTask", disabled: false },
-      { btnID: 1, name: "Done", method: "getTaskDone", disabled: false },
-      { btnID: 2, name: "Undo", method: "undoTask", disabled: false },
-      {
-        btnID: 3,
-        name: "Save",
-        method: "saveAndReplaceEditedTask",
-        disabled: false,
-      },
-      {
-        btnID: 4,
-        name: "Cancel",
-        method: "cancelEditingTask",
-        disabled: false,
-      },
-      {
-        btnID: 5,
-        name: "Delete",
-        method: "removeSelectedTask",
-        disabled: false,
-      },
-    ],
+    taskButtons: {
+      mainBtns: [
+        {
+          btnID: 0,
+          name: "Edit",
+          cssClass: "edit-btn",
+          method: "editSelectedTask",
+        },
+        {
+          btnID: 1,
+          name: "Done",
+          cssClass: "done-btn",
+          method: "getTaskDone",
+        },
+        {
+          btnID: 2,
+          name: "Delete",
+          cssClass: "danger-btn",
+          method: "removeSelectedTask",
+        },
+      ],
+      controlBtns: [
+        {
+          btnID: 3,
+          name: "Save",
+          cssClass: "edit-btn",
+          method: "saveAndReplaceEditedTask",
+        },
+        {
+          btnID: 4,
+          name: "Cancel",
+          cssClass: "edit-btn",
+          method: "cancelEditingTask",
+        },
+      ],
+      undoBtns: [
+        {
+          btnID: 5,
+          name: "Undo",
+          cssClass: "undo-btn",
+          method: "undoTask",
+        },
+      ],
+    },
   },
 
   getters: {
-    getCurrState(state) {
-      return state;
+    getUser(state) {
+      return state.user;
+    },
+
+    getTodoList(state) {
+      return state.todos;
+    },
+
+    getTaskButtons(state) {
+      return state.taskButtons;
     },
   },
 
@@ -53,50 +84,76 @@ export default createStore({
     ADD_TASK(state, payload) {
       state.todos.push(payload);
     },
-    GET_TASK_DONE(state, task) {
+
+    GET_TASK_DONE(state, payload) {
       state.todos.forEach(
-        (item, idx) => idx === task.taskID && (item.done = true)
+        (item) => item.taskID === payload.taskID && (item.done = true)
       );
     },
-    UNDO_TASK(state, task) {
+
+    UNDO_TASK(state, payload) {
       state.todos.forEach(
-        (item, idx) => idx === task.taskID && (item.done = false)
+        (item) => item.taskID === payload.taskID && (item.done = false)
       );
     },
-    EDIT_TASK(state, task) {
-      state.todos.forEach(
-        (item, idx) => idx === task.taskID && (item.onEdit = true)
+
+    EDIT_TASK(state, payload) {
+      state.todos[payload.taskID].onEdit = true;
+      state.todos.forEach((item) =>
+        item.taskID !== payload.taskID ? (item.disabled = true) : payload
       );
     },
-    SAVE_REPLACE_EDITED_TASK(state, task) {
-      state.todos.forEach((todo, idx) => {
-        if (idx === task.taskID) {
+
+    CANCEL_EDITING(state, payload) {
+      state.todos[payload.taskID].onEdit = false;
+      state.todos.forEach((item) =>
+        item.taskID !== payload.taskID ? (item.disabled = false) : payload
+      );
+    },
+
+    SAVE_REPLACE_EDITED_TASK(state, payload) {
+      state.todos[payload.taskID].onEdit = false;
+      state.todos.forEach((item, idx) => {
+        item.disabled = false;
+
+        if (item.taskID === payload.taskID) {
+          state.todos[idx] = payload;
         }
       });
     },
-    DELETE_TASK(state, index) {
-      state = state.todos.splice(index, 1);
+
+    DELETE_TASK(state, payload) {
+      state = state.todos.splice(state.todos.indexOf(payload), 1);
     },
   },
 
   actions: {
-    newTaskForUser({ commit }, task) {
-      commit("ADD_TASK", task);
+    newTaskForUser({ commit }, payload) {
+      commit("ADD_TASK", payload);
     },
-    editSelectedTask({ commit }, task) {
-      commit("EDIT_TASK", task);
+
+    editSelectedTask({ commit }, payload) {
+      commit("EDIT_TASK", payload);
     },
-    saveAndReplaceEditedTask({ commit }, task) {
-      commit("SAVE_REPLACE_EDITED_TASK", task);
+
+    cancelEditingTask({ commit }, payload) {
+      commit("CANCEL_EDITING", payload);
     },
-    removeSelectedTask({ commit }, task) {
-      commit("DELETE_TASK", task);
+
+    saveAndReplaceEditedTask({ commit }, payload) {
+      commit("SAVE_REPLACE_EDITED_TASK", payload);
     },
-    getTaskDone({ commit }, task) {
-      commit("GET_TASK_DONE", task);
+
+    removeSelectedTask({ commit }, payload) {
+      commit("DELETE_TASK", payload);
     },
-    undoTask({ commit }, task) {
-      commit("UNDO_TASK", task);
+
+    getTaskDone({ commit }, payload) {
+      commit("GET_TASK_DONE", payload);
+    },
+
+    undoTask({ commit }, payload) {
+      commit("UNDO_TASK", payload);
     },
   },
 });

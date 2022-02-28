@@ -1,80 +1,39 @@
 <template>
   <ul class="todos-list">
-    <li v-for="todo in state.todos" :key="todo.taskID">
-      <section class="single-item">
-        <span :class="{ done: todo.done }"
-          >{{ todo.taskName }}... Estimated time is: {{ todo.estTime }}
-        </span>
-        <input
-          v-if="todo.onEdit"
-          v-model="todo.editedName"
-          type="text"
-          maxlength="30"
-        />
-        <div class="item-buttons">
-          <div v-for="button in state.taskButtons" :key="button.btnID">
-            <TodoButton
-              :key="button.btnID"
-              :cssClass="button.cssClass"
-              :name="button.name"
-              :disabled="todo.disabled"
-              :method="() => this[button.method](todo, todoIndex)"
-            ></TodoButton>
-          </div>
-        </div>
-      </section>
+    <li v-for="todo in todos" :key="todo.taskID">
+      <SingleTodoTask :todo="todo" />
     </li>
   </ul>
 </template>
 
 <script>
-import TodoButton from "./TodoButton.vue";
+import SingleTodoTask from "./SingleTodoTask.vue";
+
 export default {
   components: {
-    TodoButton,
+    SingleTodoTask,
   },
-  emits: ["ifTaskEditing"],
+
   data() {
     return {
-      state: this.$store.state,
-      showEditInput: false,
-      taskButtons: [],
+      todos: [],
     };
   },
 
   methods: {
-    removeSelectedTask(todo) {
-      this.$store.dispatch("removeSelectedTask");
+    getTodos() {
+      this.todos = this.$store.getters.getTodoList;
     },
+  },
 
-    getTaskDone(todo, index) {
-      this.$store.dispatch("getTaskDone", todo);
+  computed: {
+    getTodoList() {
+      getTodos();
     },
+  },
 
-    undoTask(todo, index) {
-      this.$store.dispatch("undoTask", todo);
-    },
-
-    editSelectedTask(todo, index) {
-      this.$store.dispatch("editSelectedTask", todo);
-    },
-
-    saveAndReplaceEditedTask(todo) {
-      let editedTask = {
-        taskName: todo.editedName,
-        editedName: todo.editedName,
-        estTime: todo.estTime,
-        done: todo.done,
-      };
-      this.$store.dispatch("saveAndReplaceEditedTask", editedTask);
-    },
-
-    cancelEditingTask(todo) {
-      todo.taskName !== todo.editedName && this.saveAndReplaceEditedTask(todo);
-
-      this.showEditInput = false;
-      todo.editedName = todo.taskName;
-    },
+  mounted() {
+    this.getTodos();
   },
 };
 </script>
@@ -82,7 +41,6 @@ export default {
 <style scoped>
 .todos-list {
   min-width: 20rem;
-  max-width: 80%;
   min-height: 30rem;
   display: flex;
   flex-direction: column;
@@ -93,25 +51,5 @@ export default {
   font-size: 2rem;
   font-weight: 550;
   list-style: none;
-}
-.single-item {
-  padding: 10px;
-  display: flex;
-  justify-content: space-between;
-  border: 1px solid black;
-  border-radius: 5px;
-  color: rgb(34, 24, 167);
-  background-color: rgb(157, 223, 201);
-}
-.item-buttons {
-  display: flex;
-  justify-content: space-between;
-}
-.done {
-  color: rgb(7, 104, 7);
-  font-size: 2.2rem;
-}
-.danger {
-  background-color: red;
 }
 </style>
