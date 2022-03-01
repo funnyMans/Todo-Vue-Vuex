@@ -47,10 +47,9 @@ export default {
   methods: {
     createTaskForUser() {
       if (this.taskForUser) {
-        this.$store.dispatch("newTaskForUser", {
+        this.$store.dispatch("addNewTask", {
           taskID: this.id++,
           taskName: this.taskForUser,
-          estTime: Math.ceil(Math.random() * 10) + " days",
           disabled: false,
           onEdit: false,
           done: false,

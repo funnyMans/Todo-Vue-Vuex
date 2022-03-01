@@ -28,12 +28,6 @@ export default {
     },
   },
 
-  computed: {
-    getTodoList() {
-      this.getTodos();
-    },
-  },
-
   mounted() {
     this.getTodos();
   },

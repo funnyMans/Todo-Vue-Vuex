@@ -1,5 +1,5 @@
 <template>
-  <main class="main-list" v-if="user">
+  <main v-if="user" class="main-list">
     <h1 class="user-name">{{ user.name }}'s</h1>
     <p class="weekly-todos-text">Todos for this week:</p>
     <List />

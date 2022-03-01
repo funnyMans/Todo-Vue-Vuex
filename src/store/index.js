@@ -6,7 +6,6 @@ export default createStore({
       {
         taskID: 0,
         taskName: "destroy Ukraine",
-        estTime: "3 days",
         disabled: false,
         onEdit: false,
         done: false,
@@ -14,7 +13,6 @@ export default createStore({
       {
         taskID: 1,
         taskName: "ocupy Doneck",
-        estTime: "7 hours",
         disabled: false,
         onEdit: false,
         done: false,
@@ -26,19 +24,19 @@ export default createStore({
           btnID: 0,
           name: "Edit",
           cssClass: "edit-btn",
-          method: "editSelectedTask",
+          method: "editTask",
         },
         {
           btnID: 1,
           name: "Done",
           cssClass: "done-btn",
-          method: "getTaskDone",
+          method: "setTaskDone",
         },
         {
           btnID: 2,
           name: "Delete",
           cssClass: "danger-btn",
-          method: "removeSelectedTask",
+          method: "removeTask",
         },
       ],
       controlBtns: [
@@ -46,13 +44,13 @@ export default createStore({
           btnID: 3,
           name: "Save",
           cssClass: "edit-btn",
-          method: "saveAndReplaceEditedTask",
+          method: "saveEditedTask",
         },
         {
           btnID: 4,
           name: "Cancel",
           cssClass: "edit-btn",
-          method: "cancelEditingTask",
+          method: "cancelEditing",
         },
       ],
       undoBtns: [
@@ -85,7 +83,7 @@ export default createStore({
       state.todos.push(payload);
     },
 
-    GET_TASK_DONE(state, payload) {
+    SET_TASK_DONE(state, payload) {
       state.todos.forEach(
         (item) => item.taskID === payload.taskID && (item.done = true)
       );
@@ -98,21 +96,23 @@ export default createStore({
     },
 
     EDIT_TASK(state, payload) {
-      state.todos[payload.taskID].onEdit = true;
       state.todos.forEach((item) =>
-        item.taskID !== payload.taskID ? (item.disabled = true) : payload
+        item.taskID !== payload.taskID
+          ? (item.disabled = true)
+          : (item.onEdit = true)
       );
     },
 
     CANCEL_EDITING(state, payload) {
-      state.todos[payload.taskID].onEdit = false;
       state.todos.forEach((item) =>
-        item.taskID !== payload.taskID ? (item.disabled = false) : payload
+        item.taskID !== payload.taskID
+          ? (item.disabled = false)
+          : (item.onEdit = false)
       );
     },
 
-    SAVE_REPLACE_EDITED_TASK(state, payload) {
-      state.todos[payload.taskID].onEdit = false;
+    SAVE_EDITED_TASK(state, payload) {
+      console.log(payload);
       state.todos.forEach((item, idx) => {
         item.disabled = false;
 
@@ -128,28 +128,28 @@ export default createStore({
   },
 
   actions: {
-    newTaskForUser({ commit }, payload) {
+    addNewTask({ commit }, payload) {
       commit("ADD_TASK", payload);
     },
 
-    editSelectedTask({ commit }, payload) {
+    editTask({ commit }, payload) {
       commit("EDIT_TASK", payload);
     },
 
-    cancelEditingTask({ commit }, payload) {
+    cancelEditing({ commit }, payload) {
       commit("CANCEL_EDITING", payload);
     },
 
-    saveAndReplaceEditedTask({ commit }, payload) {
-      commit("SAVE_REPLACE_EDITED_TASK", payload);
+    saveEditedTask({ commit }, payload) {
+      commit("SAVE_EDITED_TASK", payload);
     },
 
-    removeSelectedTask({ commit }, payload) {
+    removeTask({ commit }, payload) {
       commit("DELETE_TASK", payload);
     },
 
-    getTaskDone({ commit }, payload) {
-      commit("GET_TASK_DONE", payload);
+    setTaskDone({ commit }, payload) {
+      commit("SET_TASK_DONE", payload);
     },
 
     undoTask({ commit }, payload) {

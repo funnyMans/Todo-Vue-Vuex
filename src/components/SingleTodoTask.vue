@@ -7,16 +7,16 @@
         v-model="editedTaskValue"
         type="text"
         maxlength="30"
-        @keyup.enter="saveAndReplaceEditedTask(todo)"
+        @keyup.enter="saveEditedTask(todo)"
       />
     </article>
 
-    <article v-if="selectBtnsList(todo)" class="item-buttons">
+    <article class="item-buttons">
       <div v-for="button in taskButtons[currBtns]" :key="button.btnID">
         <TodoButton
-          :cssClass="button.cssClass"
           :name="button.name"
           :disabled="todo.disabled"
+          :cssClass="button.cssClass"
           :method="() => this[button.method](todo)"
         ></TodoButton>
       </div>
@@ -48,48 +48,46 @@ export default {
     this.taskButtons = this.$store.getters.getTaskButtons;
   },
 
+  updated() {
+    this.$props.todo.onEdit
+      ? (this.currBtns = "controlBtns")
+      : this.$props.todo.done
+      ? (this.currBtns = "undoBtns")
+      : (this.currBtns = "mainBtns");
+  },
+
   methods: {
-    selectBtnsList(todo) {
-      todo.onEdit
-        ? (this.currBtns = "controlBtns")
-        : todo.done
-        ? (this.currBtns = "undoBtns")
-        : (this.currBtns = "mainBtns");
-      return this.currBtns;
+    removeTask(todo) {
+      this.$store.dispatch("removeTask", todo);
     },
 
-    removeSelectedTask(todo) {
-      this.$store.dispatch("removeSelectedTask", todo);
-    },
-
-    getTaskDone(todo) {
-      this.$store.dispatch("getTaskDone", todo);
+    setTaskDone(todo) {
+      this.$store.dispatch("setTaskDone", todo);
     },
 
     undoTask(todo) {
       this.$store.dispatch("undoTask", todo);
     },
 
-    editSelectedTask(todo) {
-      this.$store.dispatch("editSelectedTask", todo);
+    editTask(todo) {
+      this.$store.dispatch("editTask", todo);
     },
 
-    saveAndReplaceEditedTask(todo) {
+    saveEditedTask(todo) {
       if (todo.taskName === this.editedTaskValue || !this.editedTaskValue) {
-        this.$store.dispatch("cancelEditingTask", todo);
+        this.$store.dispatch("cancelEditing", todo);
       } else {
-        this.$store.dispatch("saveAndReplaceEditedTask", {
+        this.$store.dispatch("saveEditedTask", {
           taskID: todo.taskID,
           taskName: this.editedTaskValue,
-          estTime: todo.estTime,
-          onEdit: !todo.onEdit,
+          onEdit: false,
           done: todo.done,
         });
       }
     },
 
-    cancelEditingTask(todo) {
-      this.$store.dispatch("cancelEditingTask", todo);
+    cancelEditing(todo) {
+      this.$store.dispatch("cancelEditing", todo);
     },
   },
 };
