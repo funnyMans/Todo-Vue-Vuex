@@ -1,19 +1,17 @@
 <template>
   <section class="single-item">
-    <span :class="{ done: todo.done }">
-      {{ todo.taskName }}...
-      <span v-if="!todo.done">Estimated time is: {{ todo.estTime }}</span>
-    </span>
+    <article class="todo-text">
+      <span :class="{ done: todo.done }"> {{ todo.taskName }}... </span>
+      <input
+        v-if="todo.onEdit"
+        v-model="editedTaskValue"
+        type="text"
+        maxlength="30"
+        @keyup.enter="saveAndReplaceEditedTask(todo)"
+      />
+    </article>
 
-    <input
-      v-if="todo.onEdit"
-      v-model="editedTaskValue"
-      type="text"
-      maxlength="30"
-      @keyup.enter="saveAndReplaceEditedTask(todo)"
-    />
-
-    <div v-if="selectBtnsList(todo)" class="item-buttons">
+    <article v-if="selectBtnsList(todo)" class="item-buttons">
       <div v-for="button in taskButtons[currBtns]" :key="button.btnID">
         <TodoButton
           :cssClass="button.cssClass"
@@ -22,19 +20,22 @@
           :method="() => this[button.method](todo)"
         ></TodoButton>
       </div>
-    </div>
+    </article>
   </section>
 </template>
 
 <script>
 import TodoButton from "./TodoButton.vue";
+
 export default {
   components: {
     TodoButton,
   },
+
   props: {
     todo: Object,
   },
+
   data() {
     return {
       editedTaskValue: this.todo.taskName,
@@ -42,9 +43,11 @@ export default {
       currBtns: "mainBtns",
     };
   },
+
   created() {
     this.taskButtons = this.$store.getters.getTaskButtons;
   },
+
   methods: {
     selectBtnsList(todo) {
       todo.onEdit
@@ -54,6 +57,7 @@ export default {
         : (this.currBtns = "mainBtns");
       return this.currBtns;
     },
+
     removeSelectedTask(todo) {
       this.$store.dispatch("removeSelectedTask", todo);
     },
@@ -74,14 +78,13 @@ export default {
       if (todo.taskName === this.editedTaskValue || !this.editedTaskValue) {
         this.$store.dispatch("cancelEditingTask", todo);
       } else {
-        let editedTask = {
+        this.$store.dispatch("saveAndReplaceEditedTask", {
           taskID: todo.taskID,
           taskName: this.editedTaskValue,
           estTime: todo.estTime,
           onEdit: !todo.onEdit,
           done: todo.done,
-        };
-        this.$store.dispatch("saveAndReplaceEditedTask", editedTask);
+        });
       }
     },
 
@@ -97,19 +100,31 @@ export default {
   padding: 10px;
   display: flex;
   justify-content: space-between;
-  border: 1px solid black;
+  column-gap: 1rem;
   border-radius: 5px;
   color: rgb(34, 24, 167);
-  background-color: rgb(91, 255, 201);
+  background-color: rgba(255, 255, 255, 0.568);
   box-shadow: rgba(0, 0, 0, 0.45) 0px 25px 20px -20px;
 }
+.todo-text {
+  display: flex;
+  flex-direction: column;
+}
+.todo-text > input {
+  background-color: rgb(190, 235, 220);
+  padding: 0.2rem;
+  border-radius: 5px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 1.3rem;
+}
 .item-buttons {
-  min-width: fit-content;
   display: flex;
   justify-content: space-between;
+  column-gap: 0.5rem;
 }
 .done {
-  color: rgb(7, 104, 7);
+  color: rgba(17, 116, 17, 0.836);
   font-size: 2.2rem;
+  font-weight: 1000;
 }
 </style>

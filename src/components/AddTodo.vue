@@ -26,12 +26,6 @@ export default {
     TodoButton,
   },
 
-  computed: {
-    ifSomeTaskIsOnEdit() {
-      return this.todos.some((task) => task.onEdit);
-    },
-  },
-
   data() {
     return {
       todos: [],
@@ -40,27 +34,29 @@ export default {
     };
   },
 
-  created() {
+  computed: {
+    ifSomeTaskIsOnEdit() {
+      return this.todos.some((task) => task.onEdit);
+    },
+  },
+
+  mounted() {
     this.todos = this.$store.getters.getTodoList;
   },
 
   methods: {
     createTaskForUser() {
-      let freshTask = {};
       if (this.taskForUser) {
-        freshTask = {
+        this.$store.dispatch("newTaskForUser", {
           taskID: this.id++,
           taskName: this.taskForUser,
           estTime: Math.ceil(Math.random() * 10) + " days",
           disabled: false,
           onEdit: false,
           done: false,
-        };
-      } else {
-        return;
+        });
+        this.taskForUser = "";
       }
-      this.taskForUser = "";
-      this.$store.dispatch("newTaskForUser", freshTask);
     },
   },
 };
@@ -68,6 +64,6 @@ export default {
 
 <style scoped>
 .input-wrapper {
-  margin-top: 2rem;
+  margin-top: 1.3rem;
 }
 </style>

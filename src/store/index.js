@@ -6,7 +6,7 @@ export default createStore({
       {
         taskID: 0,
         taskName: "destroy Ukraine",
-        estTime: "3days",
+        estTime: "3 days",
         disabled: false,
         onEdit: false,
         done: false,

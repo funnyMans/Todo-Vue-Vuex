@@ -7,11 +7,13 @@
 </template>
 
 <script>
+import TodoButton from "./TodoButton.vue";
 import SingleTodoTask from "./SingleTodoTask.vue";
 
 export default {
   components: {
     SingleTodoTask,
+    TodoButton,
   },
 
   data() {
@@ -28,7 +30,7 @@ export default {
 
   computed: {
     getTodoList() {
-      getTodos();
+      this.getTodos();
     },
   },
 

@@ -10,8 +10,8 @@
 <script>
 export default {
   props: {
-    method: Function,
     name: String,
+    method: Function,
     cssClass: String,
     disabled: Boolean,
   },
@@ -20,36 +20,43 @@ export default {
 
 <style scoped>
 .add-todo-btn {
-  background-color: rgb(28, 236, 97) !important;
+  background-color: rgb(28, 236, 97);
 }
-.add-todo-btn:disabled {
-  background-color: rgb(183, 183, 189);
-}
-.add-todo-btn:active {
-  color: green;
+.add-todo-btn:hover {
+  color: rgb(28, 236, 97);
 }
 .done-btn {
-  background-color: rgb(74, 211, 74);
-  color: white;
+  background-color: #20db91;
   border-radius: 1rem;
+}
+.done-btn:hover {
+  color: #20db91;
 }
 .undo-btn {
   background-color: rgb(74, 117, 211);
   color: white;
   border-radius: 1rem;
 }
+.undo-btn:hover {
+  color: rgb(74, 117, 211);
+}
 .edit-btn {
-  background-color: rgba(238, 255, 0, 0.87);
+  background: #1fd1cd;
+}
+.edit-btn:hover {
+  color: #1fd1cd;
 }
 .danger-btn {
-  background-color: rgba(252, 47, 10, 0.87);
+  background-color: rgba(197, 42, 14, 0.87);
 }
 .danger-btn:hover {
-  background-color: white !important;
+  color: rgba(197, 42, 14, 0.87);
 }
 .list-btn {
+  border: none;
   border-radius: 6px;
   box-shadow: rgba(0, 0, 0, 0.1) 1px 2px 4px;
+  padding: 0 1.5rem;
   box-sizing: border-box;
   color: #ffffff;
   cursor: pointer;
@@ -70,11 +77,13 @@ export default {
 }
 .list-btn:hover,
 .list-btn:active {
-  background-color: initial;
+  background-color: rgba(255, 255, 255, 0.753);
   background-position: 0 0;
-  color: #ff4742;
 }
 .list-btn:active {
+  opacity: 0.5;
+}
+.list-btn:disabled {
   opacity: 0.5;
 }
 </style>
